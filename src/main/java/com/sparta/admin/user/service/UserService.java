@@ -1,15 +1,14 @@
-package com.sparta.springauth.service;
+package com.sparta.admin.user.service;
 
-import com.sparta.springauth.dto.LoginRequestDto;
-import com.sparta.springauth.dto.SignupRequestDto;
-import com.sparta.springauth.entity.User;
-import com.sparta.springauth.entity.UserRoleEnum;
-import com.sparta.springauth.jwt.JwtUtil;
-import com.sparta.springauth.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import com.sparta.admin.user.dto.SignupRequestDto;
+import com.sparta.admin.user.dto.UserResponseDto;
+import com.sparta.admin.user.entity.User;
+import com.sparta.admin.user.entity.UserRoleEnum;
+import com.sparta.admin.user.jwt.JwtUtil;
+import com.sparta.admin.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,36 +26,42 @@ public class UserService {
     }
 
     // ADMIN_TOKEN
-    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+//    private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public void signup(SignupRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = passwordEncoder.encode(requestDto.getPassword());
-
-        // 회원 중복 확인
-        Optional<User> checkUsername = userRepository.findByUsername(username);
-        if (checkUsername.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+    @Transactional
+    public UserResponseDto signup(SignupRequestDto requestDto) {
+        String email = requestDto.getEmail();
+        String enterPassword = requestDto.getPassword();
+        if (enterPassword == null || enterPassword.isEmpty()) {
+            throw new IllegalArgumentException("비밀번호를 입력해주세요.");
         }
 
+        String password = passwordEncoder.encode(enterPassword);
+
+
         // email 중복확인
-        String email = requestDto.getEmail();
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
             throw new IllegalArgumentException("중복된 Email 입니다.");
         }
 
         // 사용자 ROLE 확인
-        UserRoleEnum role = UserRoleEnum.USER;
-        if (requestDto.isAdmin()) {
-            if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+        UserRoleEnum role = UserRoleEnum.STAFF;
+        if (requestDto.isManager()) {
+            if (!("curriculum".equals(requestDto.getDepartment()) || "development".equals(requestDto.getDepartment()))) {
+                throw new IllegalArgumentException("권한을 가진 부서가 아닙니다.");
             }
-            role = UserRoleEnum.ADMIN;
+            role = UserRoleEnum.MANAGER;
         }
 
+        if(!(requestDto.getDepartment().equals("marketing") || requestDto.getDepartment().equals("curriculum")
+        || requestDto.getDepartment().equals("development"))){
+            throw new IllegalArgumentException();
+        }
+        String department = requestDto.getDepartment();
         // 사용자 등록
-        User user = new User(username, password, email, role);
+        User user = new User(email, password, department, role);
         userRepository.save(user);
+        return new UserResponseDto(user);
     }
 }

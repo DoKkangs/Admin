@@ -10,54 +10,75 @@ import com.sparta.admin.lecture.dto.LectureUpdateRequest;
 import com.sparta.admin.lecture.entity.Lecture;
 import com.sparta.admin.lecture.entity.LectureCategoryEnum;
 import com.sparta.admin.lecture.service.LectureService;
+import com.sparta.admin.user.dto.SignupRequestDto;
+import com.sparta.admin.user.dto.UserResponseDto;
+import com.sparta.admin.user.entity.UserRoleEnum;
+import com.sparta.admin.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/admin/user")
 @RequiredArgsConstructor
 public class RestControllers {
 
     private final InstructorService instructorService;
     private final LectureService lectureService;
+    private final UserService userService;
 
-
-    @PostMapping("/admin/instructor")
-    public InstructorResponse saveInstructor(@RequestBody InstructorCreateRequest request){
-        return instructorService.saveInstructor(request);
+    @PostMapping("/instructor")
+    public ResponseEntity<InstructorResponse> saveInstructor(@RequestBody InstructorCreateRequest request){
+        InstructorResponse response = instructorService.saveInstructor(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/admin/instructor/{instructorId}")
-    public InstructorResponse updateInstructor(@PathVariable Long instructorId, @RequestBody InstructorUpdateRequest request){
-        return instructorService.updateInstructor(instructorId,request);
+    @Secured(UserRoleEnum.Authority.MANAGER)
+    @PutMapping("/instructor/{instructorId}")
+    public ResponseEntity<InstructorResponse> updateInstructor(@PathVariable Long instructorId, @RequestBody InstructorUpdateRequest request){
+        InstructorResponse response = instructorService.updateInstructor(instructorId, request);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/admin/lecture")
-    public LectureResponse createLecture(@RequestBody LectureCreateRequest request){
-        return lectureService.createLecture(request);
+    @PostMapping("/lecture")
+    public ResponseEntity<LectureResponse> createLecture(@RequestBody LectureCreateRequest request){
+        LectureResponse response = lectureService.createLecture(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/admin/lecture/{lectureId}")
-    public LectureResponse updateLecture(@PathVariable Long lectureId, @RequestBody LectureUpdateRequest request){
-        return lectureService.updateLecture(lectureId,request);
+    @Secured(UserRoleEnum.Authority.MANAGER)
+    @PutMapping("/lecture/{lectureId}")
+    public ResponseEntity<LectureResponse> updateLecture(@PathVariable Long lectureId, @RequestBody LectureUpdateRequest request){
+        LectureResponse response = lectureService.updateLecture(lectureId, request);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/instructor/{instructorId}")
-    public InstructorResponse getInstructor(@PathVariable Long instructorId){
-        return instructorService.getInstructor(instructorId);
+    @GetMapping("/instructor/{instructorId}")
+    public ResponseEntity<InstructorResponse> getInstructor(@PathVariable Long instructorId){
+        InstructorResponse response = instructorService.getInstructor(instructorId);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/lecture/instructor/{instructorId}")
-    public List<LectureResponse> getInstructorLecture(@PathVariable Long instructorId){
-        return lectureService.getInstructorLecture(instructorId);
+    @GetMapping("/lecture/instructor/{instructorId}")
+    public ResponseEntity<List<LectureResponse>> getInstructorLecture(@PathVariable Long instructorId){
+        List<LectureResponse> response = lectureService.getInstructorLecture(instructorId);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/admin/lecture/{category}")
-    public List<LectureResponse> getCategoryLecture(@PathVariable LectureCategoryEnum category){
-        return lectureService.getCategoryLecture(category);
+    @GetMapping("/lecture/{category}")
+    public ResponseEntity<List<LectureResponse>> getCategoryLecture(@PathVariable LectureCategoryEnum category){
+        List<LectureResponse> response = lectureService.getCategoryLecture(category);
+        return ResponseEntity.ok(response);
     }
 
-
-
+    @PostMapping("/signup")
+    public ResponseEntity<UserResponseDto> signup(@Valid @RequestBody SignupRequestDto requestDto) {
+        UserResponseDto responseDto = userService.signup(requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
 }

@@ -1,7 +1,8 @@
-package com.sparta.springauth.security;
+package com.sparta.admin.user.security;
 
-import com.sparta.springauth.entity.User;
-import com.sparta.springauth.entity.UserRoleEnum;
+
+import com.sparta.admin.user.entity.User;
+import com.sparta.admin.user.entity.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getEmail();
     }
 
     @Override

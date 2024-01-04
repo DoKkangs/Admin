@@ -1,6 +1,6 @@
-package com.sparta.springauth.jwt;
+package com.sparta.admin.user.jwt;
 
-import com.sparta.springauth.security.UserDetailsServiceImpl;
+import com.sparta.admin.user.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
