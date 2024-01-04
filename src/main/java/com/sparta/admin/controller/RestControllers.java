@@ -64,6 +64,12 @@ public class RestControllers {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/lecture/{lectureId}")
+    public ResponseEntity<LectureResponse> getLecture(@PathVariable Long lectureId){
+        LectureResponse response = lectureService.getLecture(lectureId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/lecture/instructor/{instructorId}")
     public ResponseEntity<List<LectureResponse>> getInstructorLecture(@PathVariable Long instructorId){
         List<LectureResponse> response = lectureService.getInstructorLecture(instructorId);

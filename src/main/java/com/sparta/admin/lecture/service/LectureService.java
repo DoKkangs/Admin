@@ -45,6 +45,12 @@ public class LectureService {
         return new LectureResponse(updateLecture);
     }
 
+    public LectureResponse getLecture(Long lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(IllegalArgumentException::new);
+        return new LectureResponse(lecture);
+    }
+
     public List<LectureResponse> getInstructorLecture(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 강사를 찾을 수 없습니다"));
@@ -62,4 +68,5 @@ public class LectureService {
         List<Lecture> lectures = lectureRepository.findAllByCategoryOrderByRegistrationDateDesc(category);
         return lectures.stream().map(LectureResponse::new).collect(Collectors.toList());
     }
+
 }
