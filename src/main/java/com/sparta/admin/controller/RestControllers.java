@@ -1,5 +1,9 @@
 package com.sparta.admin.controller;
 
+import com.sparta.admin.comment.dto.CommentCreateRequest;
+import com.sparta.admin.comment.dto.CommentResponse;
+import com.sparta.admin.comment.dto.CommentUpdateRequest;
+import com.sparta.admin.comment.service.CommentService;
 import com.sparta.admin.instructor.dto.InstructorCreateRequest;
 import com.sparta.admin.instructor.dto.InstructorResponse;
 import com.sparta.admin.instructor.dto.InstructorUpdateRequest;
@@ -7,7 +11,6 @@ import com.sparta.admin.instructor.service.InstructorService;
 import com.sparta.admin.lecture.dto.LectureCreateRequest;
 import com.sparta.admin.lecture.dto.LectureResponse;
 import com.sparta.admin.lecture.dto.LectureUpdateRequest;
-import com.sparta.admin.lecture.entity.Lecture;
 import com.sparta.admin.lecture.entity.LectureCategoryEnum;
 import com.sparta.admin.lecture.service.LectureService;
 import com.sparta.admin.user.dto.SignupRequestDto;
@@ -31,6 +34,7 @@ public class RestControllers {
     private final InstructorService instructorService;
     private final LectureService lectureService;
     private final UserService userService;
+    private final CommentService commentService;
 
     @PostMapping("/instructor")
     public ResponseEntity<InstructorResponse> saveInstructor(@RequestBody InstructorCreateRequest request){
@@ -76,7 +80,7 @@ public class RestControllers {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/lecture/{category}")
+    @GetMapping("/lecture/category/{category}")
     public ResponseEntity<List<LectureResponse>> getCategoryLecture(@PathVariable LectureCategoryEnum category){
         List<LectureResponse> response = lectureService.getCategoryLecture(category);
         return ResponseEntity.ok(response);
@@ -87,4 +91,22 @@ public class RestControllers {
         UserResponseDto responseDto = userService.signup(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
+
+    @PostMapping("/lecture/{lecture_id}/comments")
+    public CommentResponse commentSave(@PathVariable Long lectureId, @RequestBody CommentCreateRequest request) {
+        return commentService.commentSave(lectureId,request);
+    }
+
+    @PutMapping("/lecture/{lecture_id}/comments/{commentId}")
+    public CommentResponse commentUpdate(@PathVariable Long lecture_id, @PathVariable Long commentId,
+                                         @RequestBody CommentUpdateRequest request){
+        return commentService.commentUpdate(lecture_id,commentId,request);
+    }
+
+    @DeleteMapping("/lecture/{lecture_id}/comments/{commentId}")
+    public void deleteComment(@PathVariable Long lectureId,
+                              @PathVariable Long commentId){
+        commentService.deleteComment(lectureId,commentId);
+    }
+
 }

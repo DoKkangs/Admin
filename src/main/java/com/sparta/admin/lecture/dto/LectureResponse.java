@@ -15,8 +15,9 @@ public class LectureResponse {
     private long price;
     private String description;
     private LectureCategoryEnum category;
-    private String instructorName;
+    private Instructor instructor;
     private LocalDate registrationDate;
+
 
     public LectureResponse(Lecture lecture) {
         this.id = lecture.getId();
@@ -24,7 +25,7 @@ public class LectureResponse {
         this.price = lecture.getPrice();
         this.description = lecture.getDescription();
         this.category = lecture.getCategory();
-        this.instructorName = lecture.getInstructor().getName();
+        this.instructor = lecture.getInstructor();
         this.registrationDate = lecture.getRegistrationDate();
     }
 }

@@ -1,11 +1,14 @@
 package com.sparta.admin.lecture.entity;
 
+import com.sparta.admin.comment.entity.Comment;
 import com.sparta.admin.instructor.entity.Instructor;
 import com.sparta.admin.lecture.dto.LectureCreateRequest;
 import com.sparta.admin.lecture.dto.LectureUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -25,6 +28,9 @@ public class Lecture extends LectureDate{
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
+
+    @OneToMany(mappedBy = "lecture")
+    private List<Comment> comments;
 
     public Lecture(LectureCreateRequest request,Instructor instructor) {
         this.lectureName = request.getLectureName();
